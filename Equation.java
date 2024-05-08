@@ -1,12 +1,39 @@
 public class Equation {
+    private String name;
     private String base;
     private String term1;
     private String term2;
+    String answer;
 
-    public Equation(String base){
+    public Equation(int num, String base){
+        this.name = "EQ" + num;
         this.base = base;
+        answer = solver(base);
     }
-
+    public String solver(String base){
+        // find groups and run solve on them, then replace
+        base = collapseGroups(base);
+        // find mult or div and split there to solve
+        //solveMD();
+        // find add/sub and split there to solve
+        //solveAS();
+        answer = base;
+        return answer;
+    }
+    public String collapseGroups(String base){
+        String subBase;
+        String newBase;
+        if (base.indexOf('(') >= 0 && base.indexOf(')') >= 0){
+            subBase = base.substring(base.lastIndexOf('(')+1);
+            subBase = subBase.substring(0,subBase.indexOf(')'));
+            String start = base.substring(0, base.lastIndexOf('('));
+            String mid = solver(subBase);
+            String end = base.substring(start.length() + mid.length()+2);
+            newBase = start + mid + end ;
+            base = collapseGroups(newBase);
+        }
+        return base;
+    }
     public void breakUp( char axis){
         char[] ops = {'+', '-', '*', '/'};
         int place = -1;
@@ -23,7 +50,12 @@ public class Equation {
 
     }
     public static boolean find(String field, char query){
+        //returns place where defined character is, if it exists in the string
         return field.indexOf(query) > -1;
+    }
+    @Override
+    public String toString(){
+        return name + ":" + base + " = " + answer;
     }
 
 }
