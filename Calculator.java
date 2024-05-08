@@ -1,38 +1,49 @@
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Calculator {
+
     public static void main(String[] args){
-        //Equation[] history = new Equation[];
+        ArrayList<Equation> history = new ArrayList<Equation>();
         welcomeMessage();
-        calculate();
-        System.out.println("Thanks for calculating!");
+        calculate(history);
+        exitMessage();
     }
-    public static void calculate(){
+    public static void calculate(ArrayList<Equation> history){
         Scanner keyboard = new Scanner(System.in);
-        int eqNum;
+        int eqNum = 1;
         boolean cont = true;
+        System.out.println("Enter an Equation, type HELP for help, or type QUIT to stop calculating:");
         do {
-            switch (keyboard.next()) {
-                case ("HELP"): helpMessage();
-                    ;
-                case ("QUIT"): cont = false
-                    ;
-                case ("EQH"): //Equation[var];
-                    ;
+            String entered = keyboard.next();
+            switch (entered) {
+                case ("HELP"):
+                    helpMessage();
+                    break;
+                case ("QUIT"):
+                    cont = false;
+                    break;
+                case ("EQH"):
+                    System.out.println(history);
+                    break;
                 case ("---"):
-                    ;
+                    System.out.println("test");
+                    break;
                 default:
+                    history.addLast(new Equation(eqNum, entered));
+                    System.out.println(history.getLast().answer);
+                    break;
             }
+            eqNum++;
         }while(cont);
     }
     public static void welcomeMessage(){
         System.out.println("Welcome to this calculator!");
         System.out.println("---------------------------");
-        System.out.println("If you are at any point confused or need help, type HELP instead of an equation.");
-        System.out.println("Enter an Equation or type QUIT to stop calculating:");
 
+    }
+    private static void exitMessage() {
+        System.out.println("Thanks for calculating!");
     }
     public static void helpMessage(){
         System.out.println("* Please use \"*\" for multiplication and \"/\" for division.");
@@ -42,7 +53,7 @@ public class Calculator {
         System.out.println("  equation in parenthesis to ensure the proper Order of Operations.");
         System.out.println("* When multiplying a term against a parenthetical equation,");
         System.out.println("  Ex: \"3*(3+4)\", ensure that the asterisk is placed between the ");
-        System.out.println("  parenthesis and the multiplicand.");
+        System.out.println("  parenthesis and the multiplier.");
         System.out.println("   - \"3(3+4)\" may not work as intended");
         System.out.println("* If you would like to utilize the result of a previous equation as");
         System.out.println("  a variable you can use that equation's EQ-key (Ex: \"(EQ1)\" for ");
