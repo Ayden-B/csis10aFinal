@@ -27,10 +27,13 @@ public class Calculator {
                     System.out.println(history);
                     break;
                 case ("---"):
-                    System.out.println("test");
+                    System.out.println("test successful");
                     break;
                 default:
-                    history.addLast(new Equation(eqNum, entered));
+                    if(entered.contains("ANS")){
+                        entered = entered.replace("ANS", history.getLast().answer);
+                    }
+                    history.add(new Equation(eqNum, entered));
                     System.out.println(history.getLast().answer);
                     break;
             }
@@ -52,7 +55,7 @@ public class Calculator {
         System.out.println("* For safety, you may want to encapsulate certain portions of an");
         System.out.println("  equation in parenthesis to ensure the proper Order of Operations.");
         System.out.println("* When multiplying a term against a parenthetical equation,");
-        System.out.println("  Ex: \"3*(3+4)\", ensure that the asterisk is placed between the ");
+        System.out.println("  Ex: \"3*(3+4)\", ensure that an asterisk is placed between the ");
         System.out.println("  parenthesis and the multiplier.");
         System.out.println("   - \"3(3+4)\" may not work as intended");
         System.out.println("* If you would like to utilize the result of a previous equation as");
