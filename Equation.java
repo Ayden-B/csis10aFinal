@@ -18,6 +18,12 @@ public class Equation {
             if (base.substring(base.length()-1).matches("[-(+*/]")){
                 base = base.substring(0, base.length()-1);
             }
+            if (base.substring(0, 1).matches("[+)*/]")){
+                if (base.charAt(0) == ')'){
+                    return "Error: Unclosed";
+                }
+                base = base.substring(1);
+            }
             // find groups and run solve on them, then replace
             base = collapseGroups(base);
             //add exponent check
@@ -25,9 +31,12 @@ public class Equation {
             base = solveAS(base);
             // find mult or div and split there to solve
             base = solveMD(base);
+            if (base.endsWith(".0")){
+                base = base.substring(0, base.length()-2);
+            }
             answer = base;
         } else {
-            answer = "Error: Unsupported Character";
+            base = "Error: Unsupported Character";
         }
 
         return answer;
@@ -42,17 +51,23 @@ public class Equation {
             subBase = subBase.substring(0,subBase.indexOf(')')); //isolate latest occurring, innermost parentheses group
             String start = base.substring(0, base.lastIndexOf('('));
             String mid = solver(subBase);//solve said group
+            if (mid == null){
+                return "Error: Empty Group";
+            }
+            if (mid.contains("Error")){
+                return mid;
+            }
             newBase = start + mid + end ; // reconstruct the solved group with whatever was surrounding it
             base = collapseGroups(newBase);
         } else if((base.indexOf('(') >= 0 && !(base.indexOf(')') >= 0)) || (!(base.indexOf('(') >= 0) && base.indexOf(')') >= 0)){
-            answer = "Error: Unclosed ";
+            answer = "Error: Unclosed";
         }
         return base;
     }
     public String solveAS(String base) {
         String answer;
-        String term1;
-        String term2;
+        BigDecimal term1;
+        BigDecimal term2;
         int splitPoint;
         if (!base.contains("Error")) {
             if (base.contains("-") || base.contains("+")) {
@@ -61,14 +76,12 @@ public class Equation {
                 }else{
                     splitPoint = base.lastIndexOf('+');
                 }
-                term1 = solver(base.substring(0, splitPoint));
-                BigDecimal _term1 = new BigDecimal(solver(base.substring(0, splitPoint)));
-                term2 = solver(base.substring(splitPoint+1));
-                BigDecimal _term2 = new BigDecimal(solver(base.substring(splitPoint+1)));
+                term1 = new BigDecimal(solver(base.substring(0, splitPoint)));
+                term2 = new BigDecimal(solver(base.substring(splitPoint+1)));
                 if (base.charAt(splitPoint) == '+'){
-                    answer = "" + (_term1.add(_term2));
+                    answer = "" + (term1.add(term2));
                 } else{
-                    answer = "" + (_term1.subtract(_term2));
+                    answer = "" + (term1.subtract(term2));
                 }
 
                 return answer;
@@ -78,8 +91,8 @@ public class Equation {
     }
     public String solveMD(String base){
         String answer;
-        String term1;
-        String term2;
+        BigDecimal term1;
+        BigDecimal term2;
         int splitPoint;
         if (!base.contains("Error")) {
             if (base.contains("*") || base.contains("/")) {
@@ -88,14 +101,15 @@ public class Equation {
                 }else{
                     splitPoint = base.lastIndexOf('/');
                 }
-                term1 = solver(base.substring(0, splitPoint));
-                BigDecimal _term1 = new BigDecimal(solver(base.substring(0, splitPoint)));
-                term2 = solver(base.substring(splitPoint+1));
-                BigDecimal _term2 = new BigDecimal(solver(base.substring(splitPoint+1)));
+                term1 = new BigDecimal(solver(base.substring(0, splitPoint)));
+                term2 = new BigDecimal(solver(base.substring(splitPoint+1)));
                 if (base.charAt(splitPoint) == '*'){
-                    answer = "" + (_term1.multiply(_term2));
+                    answer = "" + (term1.multiply(term2));
                 } else{
-                    answer = "" + (_term1.divide(_term2));
+                    if (term2.equals(new BigDecimal("0"))){
+                        return "Error: Divide by Zero";
+                    }
+                    answer = "" + (term1.divide(term2));
                 }
 
                 return answer;
