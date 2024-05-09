@@ -34,21 +34,27 @@ public class Calculator {
 
                     history.add(new Equation(eqNum, findEQKey(history,entered)));
                     System.out.println(history.getLast().answer);
+                    if (history.getLast().answer.contains("Error")){
+                        history.removeLast();
+                    }
+                    eqNum++;
                     break;
             }
-            eqNum++;
         }while(cont);
     }
     public static String findEQKey(ArrayList<Equation> history,String entered){
-        //finds any place in the entered string
+        //finds any place in the entered string where a placeholder variable for the answer to a previous
+        // equation is and replaces it with that value
         String returner = entered;
         String target;
         char[] terms  = new char[]{'(', ')', '+', '-', '*', '/', 'E'};
         if(entered.contains("ANS")){
+            //replaces instances of "ANS" with previous answer
             returner = entered.replace("ANS", history.getLast().answer);
 
         }
         if(entered.contains("EQ")){
+            //finds any Equation key within entered string, figures out what equation it is referring to, and replaces it
             int locEQ = entered.indexOf("EQ");
             target = entered.substring(locEQ, (Equation.findChars(entered.substring(locEQ+2), terms)+ locEQ +2));
             String numKey = target.substring(2);
@@ -73,7 +79,7 @@ public class Calculator {
     public static void helpMessage(){
         System.out.println("* Please use \"*\" for multiplication and \"/\" for division.");
         System.out.println("  - Example: \"3*4\" or \"3/4\".");
-        System.out.println("  - \"3x4\" will not work as x is assumed to be a variable");
+        System.out.println("  - \"3x4\" will not work as x is assumed to be an unknown variable");
         System.out.println("* For safety, you may want to encapsulate certain portions of an");
         System.out.println("  equation in parenthesis to ensure the proper Order of Operations.");
         System.out.println("* When multiplying a term against a parenthetical equation,");
@@ -85,5 +91,7 @@ public class Calculator {
         System.out.println("  the first equation), or simply \"ANS\" for the most recent result.");
         System.out.println("  Remember that all inserts (\"ANS\", \"EQ_\") should be in all-caps");
         System.out.println("* To view all previous equations, type \"EQH\"instead of an equation");
+        System.out.println("* Any equation that results in an error message will not be recorded ");
+        System.out.println("  in the equation history, but will allow you to continue calculating");
     }
 }

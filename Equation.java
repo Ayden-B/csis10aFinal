@@ -1,8 +1,6 @@
 public class Equation {
-    private String name;
+    private final String name;
     private String base;
-    private String term1;
-    private String term2;
     String answer;
 
     public Equation(int num, String base){
@@ -12,13 +10,19 @@ public class Equation {
     }
     public String solver(String base){
         if (valid(base)) {
+            if (base.charAt(0) == '-'){
+                base = "0" + base;
+            }
+            if (base.substring(base.length()-1).matches("[-(+*/]")){
+                base = base.substring(0, base.length()-1);
+            }
             // find groups and run solve on them, then replace
             base = collapseGroups(base);
-            //exponent check
-            // find mult or div and split there to solve
-            //solveMD();
+            //add exponent check
             // find add/sub and split there to solve
-            //solveAS();
+            base = solveAS(base);
+            // find mult or div and split there to solve
+            base = solveMD(base);
             answer = base;
         } else {
             answer = "Error: Unsupported Character";
@@ -29,32 +33,85 @@ public class Equation {
     public String collapseGroups(String base){
         String subBase; // placeholder strings
         String newBase;
+
         if (base.indexOf('(') >= 0 && base.indexOf(')') >= 0){
             subBase = base.substring(base.lastIndexOf('(')+1);
             subBase = subBase.substring(0,subBase.indexOf(')')); //isolate latest occurring, innermost parentheses group
             String start = base.substring(0, base.lastIndexOf('('));
-            String mid = solver(subBase);
+            String mid = solver(subBase);//solve said group
             String end = base.substring(start.length() + mid.length()+2);
-            newBase = start + mid + end ; // reconstruct the answer to what was in parentheses with whatever was surrounding them
+            newBase = start + mid + end ; // reconstruct the solved group with whatever was surrounding it
             base = collapseGroups(newBase);
+        } else if((base.indexOf('(') >= 0 && !(base.indexOf(')') >= 0)) || (!(base.indexOf('(') >= 0) && base.indexOf(')') >= 0)){
+            answer = "Error: Unclosed ";
         }
         return base;
     }
-    public void breakUp( char axis){
-        char[] ops = {'+', '-', '*', '/'};
-        int place = -1;
-        for (int i = 3; i > -1; i--){
-            if(base.indexOf(ops[i]) > -1){
-                place = base.indexOf(ops[i]);
+    public String solveAS(String base) {
+        String answer;
+        String term1;
+        String term2;
+        int splitPoint;
+        if (!base.contains("Error")) {
+            if (base.contains("-") || base.contains("+")) {
+                if (base.lastIndexOf('-') > base.lastIndexOf('+')){
+                    splitPoint = base.lastIndexOf('-');
+                }else{
+                    splitPoint = base.lastIndexOf('+');
+                }
+                term1 = solver(base.substring(0, splitPoint));
+                term2 = solver(base.substring(splitPoint+1));
+                if (base.charAt(splitPoint) == '+'){
+                    answer = "" + (Double.parseDouble(term1) + Double.parseDouble(term2));
+                } else{
+                    answer = "" + (Double.parseDouble(term1) - Double.parseDouble(term2));
+                }
+
+                return answer;
             }
         }
-        if (place > -1) {
-            term1 = base.substring(0, place);
-            term2 = base.substring(place + 1);
-
-        }
-
+        return base;
     }
+    public String solveMD(String base){
+        String answer;
+        String term1;
+        String term2;
+        int splitPoint;
+        if (!base.contains("Error")) {
+            if (base.contains("*") || base.contains("/")) {
+                if (base.lastIndexOf('*') > base.lastIndexOf('/')){
+                    splitPoint = base.lastIndexOf('*');
+                }else{
+                    splitPoint = base.lastIndexOf('/');
+                }
+                term1 = solver(base.substring(0, splitPoint));
+                term2 = solver(base.substring(splitPoint+1));
+                if (base.charAt(splitPoint) == '*'){
+                    answer = "" + (Double.parseDouble(term1) * Double.parseDouble(term2));
+                } else{
+                    answer = "" + (Double.parseDouble(term1) / Double.parseDouble(term2));
+                }
+
+                return answer;
+            }
+        }
+        return base;
+    }
+//    public void breakUp( char axis){
+//        char[] ops = {'+', '-', '*', '/'};
+//        int place = -1;
+//        for (int i = 3; i > -1; i--){
+//            if(base.indexOf(ops[i]) > -1){
+//                place = base.indexOf(ops[i]);
+//            }
+//        }
+//        if (place > -1) {
+//            term1 = base.substring(0, place);
+//            term2 = base.substring(place + 1);
+//
+//        }
+//
+//    }
     public static int findChars(String field, char[] queries){
         int returner = field.length();
         for (char query : queries) {
