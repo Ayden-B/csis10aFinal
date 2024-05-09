@@ -40,6 +40,7 @@ public class Calculator {
         }while(cont);
     }
     public static String findEQKey(ArrayList<Equation> history,String entered){
+        //finds any place in the entered string
         String returner = entered;
         String target;
         char[] terms  = new char[]{'(', ')', '+', '-', '*', '/', 'E'};
@@ -49,14 +50,15 @@ public class Calculator {
         }
         if(entered.contains("EQ")){
             int locEQ = entered.indexOf("EQ");
-            target = entered.substring(locEQ, Equation.findChars(entered.substring(locEQ+2), terms)+2);
-            String numkey = target.substring(2);
-            if (numkey.matches("[0-9]+")) {
-                int id = Integer.parseInt(numkey);
+            target = entered.substring(locEQ, (Equation.findChars(entered.substring(locEQ+2), terms)+ locEQ +2));
+            String numKey = target.substring(2);
+            if (numKey.matches("[0-9]+")) {
+                int id = Integer.parseInt(numKey);
                 if (id <= history.size()){
-                    returner = returner.replace(target, history.get(id-1).answer);
+                    returner = findEQKey(history, returner.replace(target, history.get(id-1).answer));
                 }
             }
+
         }
         return returner;
     }

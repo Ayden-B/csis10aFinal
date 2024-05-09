@@ -11,14 +11,19 @@ public class Equation {
         answer = solver(base);
     }
     public String solver(String base){
-        // find groups and run solve on them, then replace
-        base = collapseGroups(base);
-        //exponent check
-        // find mult or div and split there to solve
-        //solveMD();
-        // find add/sub and split there to solve
-        //solveAS();
-        answer = base;
+        if (valid(base)) {
+            // find groups and run solve on them, then replace
+            base = collapseGroups(base);
+            //exponent check
+            // find mult or div and split there to solve
+            //solveMD();
+            // find add/sub and split there to solve
+            //solveAS();
+            answer = base;
+        } else {
+            answer = "Error: Unsupported Character";
+        }
+
         return answer;
     }
     public String collapseGroups(String base){
@@ -60,7 +65,7 @@ public class Equation {
         return returner;
     }
     public static boolean valid(String entered){
-        return entered.matches("[0-9()*/+-]+");
+        return entered.matches("[0-9().*/+-]+");
     }
     public static void main(String[] args) {
 
