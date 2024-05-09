@@ -6,7 +6,7 @@ Operating Notes:
   - Example: "3*4" or "3/4".
   - "3x4" will not work as x is assumed to be an unknown variable
 * For safety, you may want to encapsulate certain portions of an
-  equation in parenthesis to ensure the proper Order of Operations.
+  equation in parentheses to ensure the proper Order of Operations.
 * When multiplying a term against a parenthetical equation,
   Ex: "3*(3+4)", ensure that an asterisk is placed between the 
   parenthesis and the multiplier.
