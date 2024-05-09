@@ -1,3 +1,5 @@
+import java.math.BigDecimal;
+
 public class Equation {
     private final String name;
     private String base;
@@ -36,10 +38,10 @@ public class Equation {
 
         if (base.indexOf('(') >= 0 && base.indexOf(')') >= 0){
             subBase = base.substring(base.lastIndexOf('(')+1);
+            String end = subBase.substring(subBase.indexOf(')')+1);
             subBase = subBase.substring(0,subBase.indexOf(')')); //isolate latest occurring, innermost parentheses group
             String start = base.substring(0, base.lastIndexOf('('));
             String mid = solver(subBase);//solve said group
-            String end = base.substring(start.length() + mid.length()+2);
             newBase = start + mid + end ; // reconstruct the solved group with whatever was surrounding it
             base = collapseGroups(newBase);
         } else if((base.indexOf('(') >= 0 && !(base.indexOf(')') >= 0)) || (!(base.indexOf('(') >= 0) && base.indexOf(')') >= 0)){
@@ -60,11 +62,13 @@ public class Equation {
                     splitPoint = base.lastIndexOf('+');
                 }
                 term1 = solver(base.substring(0, splitPoint));
+                BigDecimal _term1 = new BigDecimal(solver(base.substring(0, splitPoint)));
                 term2 = solver(base.substring(splitPoint+1));
+                BigDecimal _term2 = new BigDecimal(solver(base.substring(splitPoint+1)));
                 if (base.charAt(splitPoint) == '+'){
-                    answer = "" + (Double.parseDouble(term1) + Double.parseDouble(term2));
+                    answer = "" + (_term1.add(_term2));
                 } else{
-                    answer = "" + (Double.parseDouble(term1) - Double.parseDouble(term2));
+                    answer = "" + (_term1.subtract(_term2));
                 }
 
                 return answer;
@@ -85,11 +89,13 @@ public class Equation {
                     splitPoint = base.lastIndexOf('/');
                 }
                 term1 = solver(base.substring(0, splitPoint));
+                BigDecimal _term1 = new BigDecimal(solver(base.substring(0, splitPoint)));
                 term2 = solver(base.substring(splitPoint+1));
+                BigDecimal _term2 = new BigDecimal(solver(base.substring(splitPoint+1)));
                 if (base.charAt(splitPoint) == '*'){
-                    answer = "" + (Double.parseDouble(term1) * Double.parseDouble(term2));
+                    answer = "" + (_term1.multiply(_term2));
                 } else{
-                    answer = "" + (Double.parseDouble(term1) / Double.parseDouble(term2));
+                    answer = "" + (_term1.divide(_term2));
                 }
 
                 return answer;
