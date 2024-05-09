@@ -8,6 +8,7 @@ public class Calculator {
         welcomeMessage();
         calculate(history);
         exitMessage();
+
     }
     public static void calculate(ArrayList<Equation> history){
         Scanner keyboard = new Scanner(System.in);
@@ -30,15 +31,34 @@ public class Calculator {
                     System.out.println("test successful");
                     break;
                 default:
-                    if(entered.contains("ANS")){
-                        entered = entered.replace("ANS", history.getLast().answer);
-                    }
-                    history.add(new Equation(eqNum, entered));
+
+                    history.add(new Equation(eqNum, findEQKey(history,entered)));
                     System.out.println(history.getLast().answer);
                     break;
             }
             eqNum++;
         }while(cont);
+    }
+    public static String findEQKey(ArrayList<Equation> history,String entered){
+        String returner = entered;
+        String target;
+        char[] terms  = new char[]{'(', ')', '+', '-', '*', '/', 'E'};
+        if(entered.contains("ANS")){
+            returner = entered.replace("ANS", history.getLast().answer);
+
+        }
+        if(entered.contains("EQ")){
+            int locEQ = entered.indexOf("EQ");
+            target = entered.substring(locEQ, Equation.findChars(entered.substring(locEQ+2), terms)+2);
+            String numkey = target.substring(2);
+            if (numkey.matches("[0-9]+")) {
+                int id = Integer.parseInt(numkey);
+                if (id <= history.size()){
+                    returner = returner.replace(target, history.get(id-1).answer);
+                }
+            }
+        }
+        return returner;
     }
     public static void welcomeMessage(){
         System.out.println("Welcome to this calculator!");
@@ -61,6 +81,7 @@ public class Calculator {
         System.out.println("* If you would like to utilize the result of a previous equation as");
         System.out.println("  a variable you can use that equation's EQ-key (Ex: \"(EQ1)\" for ");
         System.out.println("  the first equation), or simply \"ANS\" for the most recent result.");
+        System.out.println("  Remember that all inserts (\"ANS\", \"EQ_\") should be in all-caps");
         System.out.println("* To view all previous equations, type \"EQH\"instead of an equation");
     }
 }

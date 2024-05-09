@@ -50,9 +50,20 @@ public class Equation {
         }
 
     }
-    public static boolean find(String field, char query){
-        //returns place where defined character is, if it exists in the string
-        return field.indexOf(query) > -1;
+    public static int findChars(String field, char[] queries){
+        int returner = field.length();
+        for (char query : queries) {
+            if ((field.indexOf(query) > -1) && (field.indexOf(query) < returner)) {
+                returner = field.indexOf(query);
+            }
+        }
+        return returner;
+    }
+    public static boolean valid(String entered){
+        return entered.matches("[0-9()*/+-]+");
+    }
+    public static void main(String[] args) {
+
     }
     @Override
     public String toString(){
