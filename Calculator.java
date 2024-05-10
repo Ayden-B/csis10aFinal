@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class Calculator {
 
     public static void main(String[] args){
-        ArrayList<Equation> history = new ArrayList<Equation>();
+        ArrayList<Equation> history = new ArrayList<>();
         welcomeMessage();
         calculate(history);
         exitMessage();
@@ -27,11 +27,9 @@ public class Calculator {
                 case ("EQH"):
                     System.out.println(history);
                     break;
-                case ("---"):
-                    System.out.println("test successful");
+                case (""):
                     break;
                 default:
-
                     history.add(new Equation(eqNum, findEQKey(history,entered)));
                     System.out.println(history.getLast().answer);
                     if (history.getLast().answer.contains("Error")){
@@ -62,6 +60,8 @@ public class Calculator {
                 int id = Integer.parseInt(numKey);
                 if (id <= history.size()){
                     returner = findEQKey(history, returner.replace(target, history.get(id-1).answer));
+                } else{
+                    returner = "Error: Invalid EQ-Key";
                 }
             }
 

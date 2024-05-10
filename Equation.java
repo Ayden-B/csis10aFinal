@@ -2,7 +2,7 @@ import java.math.BigDecimal;
 
 public class Equation {
     private final String name;
-    private String base;
+    private final String base;
     String answer;
 
     public Equation(int num, String base){
@@ -34,11 +34,11 @@ public class Equation {
             if (base.endsWith(".0")){
                 base = base.substring(0, base.length()-2);
             }
-            answer = base;
-        } else {
+        } else if (base.contains("Error")){
+        }else{
             base = "Error: Unsupported Character";
         }
-
+        answer = base;
         return answer;
     }
     public String collapseGroups(String base){
@@ -46,6 +46,7 @@ public class Equation {
         String newBase;
 
         if (base.indexOf('(') >= 0 && base.indexOf(')') >= 0){
+            base = formatGroups(base);
             subBase = base.substring(base.lastIndexOf('(')+1);
             String end = subBase.substring(subBase.indexOf(')')+1);
             subBase = subBase.substring(0,subBase.indexOf(')')); //isolate latest occurring, innermost parentheses group
@@ -64,6 +65,19 @@ public class Equation {
         }
         return base;
     }
+    public String formatGroups(String base){
+        int start = base.indexOf('(');
+        if (base.substring(start-1, start).matches("[1-9]")){
+            base = base.substring(0,start) + "*" + base.substring(start);
+        }
+        int end = base.lastIndexOf(')');
+        if (end > -1 && (end +1) < base.length()){
+            if (base.substring(end+1, end+2).matches("[1-9]")){
+                base = base.substring(0, end +1) + "*" + base.substring(end+1);
+            }
+        }
+        return base;
+    }
     public String solveAS(String base) {
         String answer;
         BigDecimal term1;
@@ -71,11 +85,7 @@ public class Equation {
         int splitPoint;
         if (!base.contains("Error")) {
             if (base.contains("-") || base.contains("+")) {
-                if (base.lastIndexOf('-') > base.lastIndexOf('+')){
-                    splitPoint = base.lastIndexOf('-');
-                }else{
-                    splitPoint = base.lastIndexOf('+');
-                }
+                splitPoint = Math.max(base.lastIndexOf('-'), base.lastIndexOf('+'));
                 term1 = new BigDecimal(solver(base.substring(0, splitPoint)));
                 term2 = new BigDecimal(solver(base.substring(splitPoint+1)));
                 if (base.charAt(splitPoint) == '+'){
@@ -96,11 +106,7 @@ public class Equation {
         int splitPoint;
         if (!base.contains("Error")) {
             if (base.contains("*") || base.contains("/")) {
-                if (base.lastIndexOf('*') > base.lastIndexOf('/')){
-                    splitPoint = base.lastIndexOf('*');
-                }else{
-                    splitPoint = base.lastIndexOf('/');
-                }
+                splitPoint = Math.max(base.lastIndexOf('*'), base.lastIndexOf('/'));
                 term1 = new BigDecimal(solver(base.substring(0, splitPoint)));
                 term2 = new BigDecimal(solver(base.substring(splitPoint+1)));
                 if (base.charAt(splitPoint) == '*'){
@@ -117,21 +123,6 @@ public class Equation {
         }
         return base;
     }
-//    public void breakUp( char axis){
-//        char[] ops = {'+', '-', '*', '/'};
-//        int place = -1;
-//        for (int i = 3; i > -1; i--){
-//            if(base.indexOf(ops[i]) > -1){
-//                place = base.indexOf(ops[i]);
-//            }
-//        }
-//        if (place > -1) {
-//            term1 = base.substring(0, place);
-//            term2 = base.substring(place + 1);
-//
-//        }
-//
-//    }
     public static int findChars(String field, char[] queries){
         int returner = field.length();
         for (char query : queries) {
@@ -143,9 +134,6 @@ public class Equation {
     }
     public static boolean valid(String entered){
         return entered.matches("[0-9().*/+-]+");
-    }
-    public static void main(String[] args) {
-
     }
     @Override
     public String toString(){
