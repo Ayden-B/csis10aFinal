@@ -5,12 +5,6 @@ Operating Notes:
 * Please use "*" for multiplication and "/" for division.
   - Example: "3*4" or "3/4".
   - "3x4" will not work as x is assumed to be an unknown variable
-* For safety, you may want to encapsulate certain portions of an
-  equation in parentheses to ensure the proper Order of Operations.
-* When multiplying a term against a parenthetical equation,
-  Ex: "3*(3+4)", ensure that an asterisk is placed between the 
-  parenthesis and the multiplier.
-   - "3(3+4)" may not work as intended
 * If you would like to utilize the result of a previous equation as
   a variable you can use that equation's EQ-key (Ex: "(EQ1)" for
   the first equation), or simply "ANS" for the most recent result.
@@ -18,3 +12,4 @@ Operating Notes:
 * To view all previous equations, type "EQH"instead of an equation
 * Any equation that results in an error message will not be recorded
   in the equation history, but will allow you to continue calculating
+* Type "QUIT" to stop calculating.
